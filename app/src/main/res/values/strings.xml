@@ -2,5 +2,7 @@
     <string name="app_name">Focus</string>
     <string name="start">Start</string>
     <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
+    <string name="exit">Exit</string>
 
 </resources>
