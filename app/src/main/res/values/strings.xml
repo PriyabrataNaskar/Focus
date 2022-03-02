@@ -4,5 +4,7 @@
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
     <string name="exit">Exit</string>
+    <string name="focus_timer">Focus Timer</string>
+    <string name="statistics">Statistics</string>
 
 </resources>

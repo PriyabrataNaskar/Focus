@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     MaterialCardView cardTimePicker;
     MaterialCardView cardCountDownTimer;
 
+    String[] timerValues = {"5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60", "70", "80", "90", "100", "110", "120", "130", "140", "150", "160", "170", "180"};
     //LinearLayout resumeExitViews;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +47,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         timePicker = findViewById(R.id.time_picker);
         timePicker.setMinValue(0);
-        timePicker.setMaxValue(23);
-        timePicker.setDisplayedValues(new String[]{"5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60", "70", "80", "90", "100", "110", "120", "130", "140", "150", "160", "170", "180"});
+        timePicker.setMaxValue(timerValues.length-1);
+        timePicker.setDisplayedValues(timerValues);
 
     }
 
