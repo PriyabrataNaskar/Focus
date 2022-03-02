@@ -1,8 +1,10 @@
 package com.priyo.focus;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,12 +23,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     MaterialCardView cardTimePicker;
     MaterialCardView cardCountDownTimer;
 
+    TextView stats;
     String[] timerValues = {"5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60", "70", "80", "90", "100", "110", "120", "130", "140", "150", "160", "170", "180"};
     //LinearLayout resumeExitViews;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        stats = findViewById(R.id.statistics_text);
+        stats.setOnClickListener(this);
 
         cardTimePicker = findViewById(R.id.time_picker_card);
         cardCountDownTimer = findViewById(R.id.card_timer_countdown);
@@ -95,6 +101,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //show start button
             startButton.setVisibility(View.VISIBLE);
             startButton.setOnClickListener(this);
+        }else if (view.getId() == R.id.statistics_text){
+            Intent intent = new Intent(this, StatisticsActivity.class);
+            startActivity(intent);
         }
     }
 }
