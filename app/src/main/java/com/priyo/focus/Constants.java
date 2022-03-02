@@ -4,6 +4,7 @@ package com.priyo.focus;
  * Created by Priyabrata Naskar on 02-03-2022.
  */
 public class Constants {
+    public static final String WORK_NAME = "CountTimer";
     //Worker Class Constants
     static final String TAG = "ForegroundWorker";
     static final int NOTIFICATION_ID = 42;

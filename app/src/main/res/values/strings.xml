@@ -6,5 +6,6 @@
     <string name="exit">Exit</string>
     <string name="focus_timer">Focus Timer</string>
     <string name="statistics">Statistics</string>
+    <string name="notification_title">Focusing</string>
 
 </resources>

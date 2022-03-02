@@ -11,10 +11,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Focus">
-        <service
-            android:name=".CountdownService"
-            android:enabled="true"
-            android:exported="false" />
 
         <activity android:name=".StatisticsActivity" />
         <activity
