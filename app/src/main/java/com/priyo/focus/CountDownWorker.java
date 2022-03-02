@@ -19,6 +19,7 @@ import androidx.work.WorkerParameters;
 import static com.priyo.focus.Constants.ARG_PROGRESS;
 import static com.priyo.focus.Constants.CHANNEL_ID;
 import static com.priyo.focus.Constants.NOTIFICATION_ID;
+import static com.priyo.focus.Constants.TAG;
 
 /**
  * Created by Priyabrata Naskar on 02-03-2022.
@@ -39,8 +40,10 @@ public class CountDownWorker extends Worker {
     @Override
     public Result doWork() {
         //Toast.makeText(getApplicationContext(),"Started",Toast.LENGTH_SHORT).show();
-//        Data inputData = getInputData();
-//        String inputUrl = inputData.getString(KEY_INPUT_URL);
+        Data inputData = getInputData();
+        int inputTime = inputData.getInt(Constants.KEY_COUNTDOWN_TIME,0);
+        Log.d(TAG, "Input Data: " + inputTime);
+        //int timeInSecond = 60*inputTime;
 //        String outputFile = inputData.getString(KEY_OUTPUT_FILE_NAME);
 //        // Mark the Worker as important
 //        String progress = "Starting Download";
@@ -55,14 +58,17 @@ public class CountDownWorker extends Worker {
         //For foreground service
         //ForegroundInfo foregroundInfo = new ForegroundInfo(NOTIFICATION_ID, notification);
         //setForegroundAsync(foregroundInfo);
+        //double totalTime = timeInSecond;
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = inputTime; i > 0; i--) {
+            int percent = (int) (((inputTime -i)/inputTime)*100.00);
+
             // we need it to get progress in UI
-            setProgressAsync(new Data.Builder().putInt(ARG_PROGRESS, i).build());
+            setProgressAsync(new Data.Builder().putInt(ARG_PROGRESS, i).putInt(Constants.PERCENTAGE,percent).build());
             // update the notification progress
             showProgress(i);
             try {
-                Thread.sleep(1000);
+                Thread.sleep(Constants.DELAY_DURATION);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -83,6 +89,8 @@ public class CountDownWorker extends Worker {
     private ForegroundInfo createForegroundInfo(@NonNull int progress) {
         // Build a notification using bytesRead and contentLength
 
+        int min = (int) (progress/60.0);
+        int sec = progress%60;
         Context context = getApplicationContext();
         String id = CHANNEL_ID;
         String title = context.getString(R.string.notification_title);
@@ -101,7 +109,7 @@ public class CountDownWorker extends Worker {
                 .setTicker(title)
                 //.setSmallIcon(R.drawable.ic_work_notification)
                 .setOngoing(true)
-                .setContentText(String.valueOf(progress))
+                .setContentText(min + " : " + sec)
                 // Add the cancel action to the notification which can
                 // be used to cancel the worker
                 //.addAction(android.R.drawable.ic_delete, cancel, intent)

@@ -11,4 +11,6 @@ public class Constants {
     static final String CHANNEL_ID = "Job progress";
     static final String ARG_PROGRESS = "Progress";
     static final long DELAY_DURATION = 1000L; // ms
+    static final String  KEY_COUNTDOWN_TIME = "TimeValueInSec";
+    static final String  PERCENTAGE = "PERCENTAGE_DONE";
 }
