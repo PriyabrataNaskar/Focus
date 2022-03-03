@@ -1,4 +1,4 @@
-package com.priyo.focus;
+package com.priyo.focus.Utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;

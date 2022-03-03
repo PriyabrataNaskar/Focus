@@ -6,11 +6,11 @@ package com.priyo.focus;
 public class Constants {
     public static final String WORK_NAME = "CountTimer";
     //Worker Class Constants
-    static final String TAG = "ForegroundWorker";
-    static final int NOTIFICATION_ID = 42;
-    static final String CHANNEL_ID = "Job progress";
-    static final String ARG_PROGRESS = "Progress";
-    static final long DELAY_DURATION = 1000L; // ms
-    static final String  KEY_COUNTDOWN_TIME = "TimeValueInSec";
-    static final String  PERCENTAGE = "PERCENTAGE_DONE";
+    public static final String TAG = "ForegroundWorker";
+    public static final int NOTIFICATION_ID = 42;
+    public static final String CHANNEL_ID = "Job progress";
+    public static final String ARG_PROGRESS = "Progress";
+    public static final long DELAY_DURATION = 1000L; // ms
+    public static final String  KEY_COUNTDOWN_TIME = "TimeValueInSec";
+    public static final String  PERCENTAGE = "PERCENTAGE_DONE";
 }

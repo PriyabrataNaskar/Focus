@@ -13,9 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Focus">
 
-        <activity android:name=".StatisticsActivity" />
+        <activity android:name=".ui.StatisticsActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +25,7 @@
         </activity>
 
         <service
-            android:name=".CountDownWorker"
+            android:name=".worker.CountDownWorker"
             android:foregroundServiceType="dataSync"
             tools:node="merge"
             tools:ignore="Instantiatable" />

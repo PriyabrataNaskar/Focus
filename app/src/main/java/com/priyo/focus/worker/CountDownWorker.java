@@ -1,10 +1,12 @@
-package com.priyo.focus;
+package com.priyo.focus.worker;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
@@ -15,6 +17,12 @@ import androidx.work.ForegroundInfo;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
+
+import com.priyo.focus.Constants;
+import com.priyo.focus.R;
+import com.priyo.focus.Utils.FormatUtils;
+import com.priyo.focus.Utils.PrefUtils;
+import com.priyo.focus.ui.MainActivity;
 
 import static com.priyo.focus.Constants.ARG_PROGRESS;
 import static com.priyo.focus.Constants.CHANNEL_ID;
@@ -102,6 +110,8 @@ public class CountDownWorker extends Worker {
         PendingIntent intent = WorkManager.getInstance(context)
                 .createCancelPendingIntent(getId());
 
+        PendingIntent resultIntent = createPendingIntent(context);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel();
         }
@@ -112,6 +122,7 @@ public class CountDownWorker extends Worker {
                 .setTicker(title)
                 .setOngoing(true)
                 .setContentText(FormatUtils.formatTime(progress))
+                .setContentIntent(resultIntent)
                 // Add the cancel action to the notification which can
                 // be used to cancel the worker
                 //.addAction(android.R.drawable.ic_delete, cancel, intent)
@@ -130,5 +141,16 @@ public class CountDownWorker extends Worker {
                 notificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID, Constants.TAG, NotificationManager.IMPORTANCE_LOW));
             }
         }
+    }
+
+    private PendingIntent createPendingIntent(Context context){
+        // Create an Intent for the activity you want to start
+        Intent resultIntent = new Intent(context, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        // Create the TaskStackBuilder and add the intent, which inflates the back stack
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addNextIntentWithParentStack(resultIntent);
+        // Get the PendingIntent containing the entire back stack
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        return resultPendingIntent;
     }
 }

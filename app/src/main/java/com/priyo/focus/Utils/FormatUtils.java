@@ -1,4 +1,4 @@
-package com.priyo.focus;
+package com.priyo.focus.Utils;
 
 import android.icu.text.DateFormat;
 import android.icu.text.SimpleDateFormat;
