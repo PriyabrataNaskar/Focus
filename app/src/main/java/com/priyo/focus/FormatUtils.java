@@ -24,11 +24,17 @@ public class FormatUtils {
             return String.format("%03d : %02d", min, sec);
         }
     }
-    
+
+    /**
+     * Calculating percentage of work done
+     * @param totalTime
+     * @param timeRemaining
+     * @return {percentage} + 1
+     */
     public static int calculatePercentage(double totalTime, double timeRemaining){
         double timeElapsed = totalTime - timeRemaining;
         int percentage = (int)((timeElapsed*100)/totalTime);
-        return percentage;
+        return percentage + 1;
     }
 
     /**

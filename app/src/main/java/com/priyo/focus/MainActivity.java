@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     OneTimeWorkRequest workRequest;
 
     int numberPickerValueIndex;
+    int remainingTime;
 
     //Congrats Card UIs
     MaterialCardView congratulationCard;
@@ -114,12 +115,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         //already a worker running, show count down
                         setStartButton(); //ready ui for countdown
                         Data workProgress = workInfos.get(0).getProgress();
-                        int value = workProgress.getInt(ARG_PROGRESS, 0);
+                        remainingTime = workProgress.getInt(ARG_PROGRESS, 0);
                         //Log.d(TAG,"Time Remaining: " + value);
                         int percentageProg = workProgress.getInt(PERCENTAGE,0);
 
                         //Format time in specific manner and set to text
-                        timerCountDown.setText(FormatUtils.formatTime(value));
+                        timerCountDown.setText(FormatUtils.formatTime(remainingTime));
                         Log.d(TAG,"Percentage: " + percentageProg);
                         progressIndicator.setProgress(percentageProg);
                         wasRunning = true;
@@ -181,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             openTimePickerCard();
         }
     }
+
     private void workSuccess(){
         workManager.getWorkInfoByIdLiveData(workRequest.getId()).observe(this, new Observer<WorkInfo>() {
             @Override
@@ -222,6 +224,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         exitButton.setVisibility(View.GONE);
 
         startButton.setVisibility(View.VISIBLE);
+
+        PrefUtils.clearSharedPrefs(getApplicationContext());
     }
 
     private void setResumeButton() {
@@ -230,8 +234,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         pauseButton.setVisibility(View.VISIBLE);
         pauseButton.setOnClickListener(this);
+
+        resumeWorker();
     }
 
+    //handle clicks on pause button
     private void setPauseButton() {
         resumeButton.setVisibility(View.VISIBLE);
         resumeButton.setOnClickListener(this);
@@ -240,6 +247,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         exitButton.setOnClickListener(this);
 
         pauseButton.setVisibility(View.GONE);
+        workManager.cancelAllWork();
+
+        //save remaining time
+        PrefUtils.saveRemainingTime(getApplicationContext(), remainingTime);
+        //stopService(new Intent(this, CountDownWorker.class));
+
+    }
+
+    private void openResumeCard() {
+        cardTimePicker.setVisibility(View.GONE);
+        //show count down
+        cardCountDownTimer.setVisibility(View.VISIBLE);
+
+        resumeButton.setVisibility(View.VISIBLE);
+        resumeButton.setOnClickListener(this);
+
+        exitButton.setVisibility(View.VISIBLE);
+        exitButton.setOnClickListener(this);
+
     }
 
     private void setStartButton() {
@@ -253,6 +279,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //show pause button
         pauseButton.setVisibility(View.VISIBLE);
+    }
+
+
+    private void resumeWorker() {
+        // Create the Data object:
+        int timeInSecond = PrefUtils.fetchRemainingTime(getApplicationContext());
+        Log.d(TAG,"Time Remained in second: " + timeInSecond);
+        Data myData = new Data.Builder()
+                // We need to pass three integers: X, Y, and Z
+                .putInt(Constants.KEY_COUNTDOWN_TIME,timeInSecond)
+                .build();
+
+        workRequest = new OneTimeWorkRequest.Builder(CountDownWorker.class).setInputData(myData).build();
+
+        //only add work if not running previously
+        workManager.enqueueUniqueWork(Constants.WORK_NAME, ExistingWorkPolicy.KEEP, workRequest);
     }
 
     private void readyWorker() {

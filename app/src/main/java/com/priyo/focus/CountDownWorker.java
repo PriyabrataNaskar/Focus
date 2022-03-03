@@ -36,12 +36,22 @@ public class CountDownWorker extends Worker {
         notificationManager = (NotificationManager) context.getSystemService(NotificationManager.class);
     }
 
+    @Override
+    public void onStopped() {
+        super.onStopped();
+    }
+
     @NonNull
     @Override
     public Result doWork() {
         //get the data
         Data inputData = getInputData();
         int inputTime = inputData.getInt(Constants.KEY_COUNTDOWN_TIME,0);
+
+        //saving total time in prefs
+        PrefUtils.saveTotalTime(getApplicationContext(),inputTime);
+        PrefUtils.saveRemainingTime(getApplicationContext(),0); //reset remaining time
+
         Log.d(TAG, "Input Data: " + inputTime);
         //int timeInSecond = 60*inputTime;
 
@@ -54,11 +64,13 @@ public class CountDownWorker extends Worker {
         ForegroundInfo foregroundInfo = createForegroundInfo(0);
         setForegroundAsync(foregroundInfo);
 
-        for (int i = 5; i > 0; i--) {
+        for (int i = inputTime; i > 0; i--) {
             int percent = FormatUtils.calculatePercentage(inputTime,i);
 
             // we need it to get progress in UI
-            setProgressAsync(new Data.Builder().putInt(ARG_PROGRESS, i).putInt(Constants.PERCENTAGE,percent).build());
+            if (!isStopped()) {
+                setProgressAsync(new Data.Builder().putInt(ARG_PROGRESS, i).putInt(Constants.PERCENTAGE, percent).build());
+            }
             // update the notification progress
             showProgress(i);
             try {
