@@ -6,14 +6,40 @@
     android:layout_height="match_parent"
     tools:context=".ui.StatisticsActivity">
     <!-- Resume and Exit Button -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline90"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.90" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline75"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_marginTop="16dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/guideline90"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/item_statistics" />
+
     <RelativeLayout
         android:id="@+id/bottom_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
         android:gravity="center_vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guideline90">
 
         <TextView
             android:id="@+id/time_text"
@@ -23,8 +49,8 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp"
-            tools:text="@string/time"
-            android:textSize="30sp" />
+            android:textSize="30sp"
+            tools:text="@string/time" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/exit_button"

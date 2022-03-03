@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Data;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
@@ -16,8 +18,11 @@ import com.google.android.material.button.MaterialButton;
 import com.priyo.focus.Constants;
 import com.priyo.focus.R;
 import com.priyo.focus.Utils.FormatUtils;
+import com.priyo.focus.adpater.StatAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.priyo.focus.Constants.ARG_PROGRESS;
 import static com.priyo.focus.Constants.TAG;
@@ -25,6 +30,12 @@ import static com.priyo.focus.Constants.TAG;
 public class StatisticsActivity extends AppCompatActivity {
     TextView timeTextView;
     MaterialButton exitButton;
+
+    // Member variables for recycler view
+    private RecyclerView mRecyclerView;
+    private List<Integer> mMessageData;
+    private StatAdapter mAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +43,14 @@ public class StatisticsActivity extends AppCompatActivity {
         timeTextView = findViewById(R.id.time_text);
         exitButton = findViewById(R.id.exit_button);
 
+        // Initialize the RecyclerView.
+        mRecyclerView = findViewById(R.id.recycler_view);
+
+        // Set the Layout Manager.
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Initialize the ArrayList that will contain the data.
+        mMessageData = new ArrayList<>();
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,5 +81,20 @@ public class StatisticsActivity extends AppCompatActivity {
                     }
                 }
             });
+            setRecyclerView();
+    }
+
+    private void setRecyclerView(){
+        List<Integer> timeList = new ArrayList<Integer>();
+        timeList.clear();
+
+        for (int i=0;i<15;i++){
+            timeList.add(new Random().nextInt(20)*5);
+        }
+        if (timeList.size()>0){
+            mMessageData = timeList;
+            mAdapter = new StatAdapter(mMessageData,this);
+            mRecyclerView.setAdapter(mAdapter);
+        }
     }
 }
