@@ -21,7 +21,8 @@
 
         <TextView
             android:id="@+id/title_text_congrats"
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            style="@style/TextAppearance.MaterialComponents.Caption"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
@@ -65,7 +66,7 @@
 
                 <TextView
                     android:id="@+id/content_text"
-                    style="@style/TextAppearance.Material3.HeadlineMedium"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"

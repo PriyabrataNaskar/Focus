@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -49,6 +48,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     OneTimeWorkRequest workRequest;
 
     int numberPickerValueIndex;
+
+    //Congrats Card UIs
+    MaterialCardView congratulationCard;
+    MaterialButton focusAgainButton;
+    TextView subtitleText;
+    TextView dateText;
+    TextView timeText;
+    TextView contentText;
+
+    //tracks if work was running earlier
+    Boolean wasRunning = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +94,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         timePicker.setMaxValue(timerValues.length - 1);
         timePicker.setDisplayedValues(timerValues);
 
+        //Congrats Card UI
+        congratulationCard = findViewById(R.id.congratulation_card);
+        subtitleText = findViewById(R.id.subtitle_text);
+        dateText = findViewById(R.id.date);
+        timeText = findViewById(R.id.time);
+        contentText = findViewById(R.id.content_text);
+        focusAgainButton = findViewById(R.id.focus_again_button);
+        focusAgainButton.setOnClickListener(this);
+
         workManager = WorkManager.getInstance(this);
 
         //if already background work is running show progress
@@ -103,14 +122,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         timerCountDown.setText(FormatUtils.formatTime(value));
                         Log.d(TAG,"Percentage: " + percentageProg);
                         progressIndicator.setProgress(percentageProg);
-                        if (workInfos.get(0).getState() == WorkInfo.State.SUCCEEDED) {
-                            Toast.makeText(getApplicationContext(), "Work Success", Toast.LENGTH_SHORT).show();
-                            showSuccess();
-                        }
+                        wasRunning = true;
+                    }else if (workInfos.get(0).getState() == WorkInfo.State.SUCCEEDED && wasRunning){
+                        progressIndicator.setProgress(100);
+                        wasRunning = false;
+                        showSuccess();
                     }
                 }
             }
         });
+
+        //listen changes on number picker
         timePicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
@@ -123,10 +145,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * Show Success after completion of work
      */
     private void showSuccess() {
-
+        openCongratsCard();
+        int totalTime = 15; //TODO: fetch this from ROOM Database
+        int databaseRowCount = 7; //TODO: fetch total row count from room db
+        String content = String.format("I just put down my phone for %d minutes to focus", totalTime);
+        String subtitle = String.format("Your %d th time productivity launcher", databaseRowCount);
+        dateText.setText(FormatUtils.getDateMonth());
+        timeText.setText(FormatUtils.getTime());
+        contentText.setText(content);
+        subtitleText.setText(subtitle);
     }
 
-    //Handle Click Events on start button
+    //Handle Click Events
     @Override
     public void onClick(View view) {
         //When button text is Start-> change to Pause
@@ -147,9 +177,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (view.getId() == R.id.statistics_text) {
             Intent intent = new Intent(this, StatisticsActivity.class);
             startActivity(intent);
+        }else if (view.getId() == R.id.focus_again_button){
+            openTimePickerCard();
         }
     }
+    private void workSuccess(){
+        workManager.getWorkInfoByIdLiveData(workRequest.getId()).observe(this, new Observer<WorkInfo>() {
+            @Override
+            public void onChanged(WorkInfo workInfo) {
+                if (workInfo != null && workInfo.getState() == WorkInfo.State.SUCCEEDED){
+                    showSuccess();
+                    return;
+                }
+            }
+        });
+    }
+    /**
+     * Open Time Picker Card From Congratulation Card
+     */
+    private void openTimePickerCard() {
+        congratulationCard.setVisibility(View.GONE);
+        cardCountDownTimer.setVisibility(View.GONE);
 
+        cardTimePicker.setVisibility(View.VISIBLE);
+        startButton.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Open Congratulation card after success
+     */
+    private void openCongratsCard(){
+        congratulationCard.setVisibility(View.VISIBLE);
+
+        cardCountDownTimer.setVisibility(View.GONE);
+        cardTimePicker.setVisibility(View.GONE);
+    }
     private void setExitButton() {
         cardTimePicker.setVisibility(View.VISIBLE);
         //show count down

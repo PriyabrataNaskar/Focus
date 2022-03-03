@@ -54,7 +54,7 @@ public class CountDownWorker extends Worker {
         ForegroundInfo foregroundInfo = createForegroundInfo(0);
         setForegroundAsync(foregroundInfo);
 
-        for (int i = inputTime; i > 0; i--) {
+        for (int i = 5; i > 0; i--) {
             int percent = FormatUtils.calculatePercentage(inputTime,i);
 
             // we need it to get progress in UI

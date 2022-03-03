@@ -1,5 +1,10 @@
 package com.priyo.focus;
 
+import android.icu.text.DateFormat;
+import android.icu.text.SimpleDateFormat;
+
+import java.util.Date;
+
 /**
  * Created by Priyabrata Naskar on 03-03-2022.
  */
@@ -24,5 +29,27 @@ public class FormatUtils {
         double timeElapsed = totalTime - timeRemaining;
         int percentage = (int)((timeElapsed*100)/totalTime);
         return percentage;
+    }
+
+    /**
+     *
+     * @return formatted date in d MMM format
+     * e.g: 03 January
+     */
+    public static String getDateMonth() {
+        DateFormat dateFormat = new SimpleDateFormat("dd MMM");
+        Date date = new Date();
+        return dateFormat.format(date);
+    }
+
+    /**
+     *
+     * @return formatted formatted current time hh:mm format
+     * e.g: 11:00, 20:00
+     */
+    public static String getTime() {
+        DateFormat dateFormat = new SimpleDateFormat("hh:mm");
+        Date date = new Date();
+        return dateFormat.format(date);
     }
 }
