@@ -39,29 +39,23 @@ public class CountDownWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        //Toast.makeText(getApplicationContext(),"Started",Toast.LENGTH_SHORT).show();
+        //get the data
         Data inputData = getInputData();
         int inputTime = inputData.getInt(Constants.KEY_COUNTDOWN_TIME,0);
         Log.d(TAG, "Input Data: " + inputTime);
         //int timeInSecond = 60*inputTime;
-//        String outputFile = inputData.getString(KEY_OUTPUT_FILE_NAME);
-//        // Mark the Worker as important
-//        String progress = "Starting Download";
-//        setForegroundAsync(createForegroundInfo(progress));
-//        download(inputUrl, outputFile);
-//        return Result.success();
+
         Log.d(Constants.TAG, "Start job");
 
         //createNotificationChannel();
         //Notification notification = notificationBuilder.build();
 
         //For foreground service
-        //ForegroundInfo foregroundInfo = new ForegroundInfo(NOTIFICATION_ID, notification);
-        //setForegroundAsync(foregroundInfo);
-        //double totalTime = timeInSecond;
+        ForegroundInfo foregroundInfo = createForegroundInfo(0);
+        setForegroundAsync(foregroundInfo);
 
         for (int i = inputTime; i > 0; i--) {
-            int percent = (int) (((inputTime -i)/inputTime)*100.00);
+            int percent = FormatUtils.calculatePercentage(inputTime,i);
 
             // we need it to get progress in UI
             setProgressAsync(new Data.Builder().putInt(ARG_PROGRESS, i).putInt(Constants.PERCENTAGE,percent).build());
@@ -88,9 +82,6 @@ public class CountDownWorker extends Worker {
     @NonNull
     private ForegroundInfo createForegroundInfo(@NonNull int progress) {
         // Build a notification using bytesRead and contentLength
-
-        int min = (int) (progress/60.0);
-        int sec = progress%60;
         Context context = getApplicationContext();
         String id = CHANNEL_ID;
         String title = context.getString(R.string.notification_title);
@@ -107,9 +98,8 @@ public class CountDownWorker extends Worker {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
                 .setTicker(title)
-                //.setSmallIcon(R.drawable.ic_work_notification)
                 .setOngoing(true)
-                .setContentText(min + " : " + sec)
+                .setContentText(FormatUtils.formatTime(progress))
                 // Add the cancel action to the notification which can
                 // be used to cancel the worker
                 //.addAction(android.R.drawable.ic_delete, cancel, intent)
@@ -117,11 +107,6 @@ public class CountDownWorker extends Worker {
 
         return new ForegroundInfo(NOTIFICATION_ID,notification);
     }
-
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    private void createChannel() {
-//        // Create a Notification channel
-//    }
 
     /**
      * Creates Notification Channel

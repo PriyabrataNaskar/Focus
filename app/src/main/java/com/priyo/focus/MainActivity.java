@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     WorkManager workManager;
     OneTimeWorkRequest workRequest;
 
-    int numberPickerValue;
+    int numberPickerValueIndex;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,9 +96,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         setStartButton(); //ready ui for countdown
                         Data workProgress = workInfos.get(0).getProgress();
                         int value = workProgress.getInt(ARG_PROGRESS, 0);
-                        progressIndicator.setProgress(value);
+                        //Log.d(TAG,"Time Remaining: " + value);
+                        int percentageProg = workProgress.getInt(PERCENTAGE,0);
+
+                        //Format time in specific manner and set to text
+                        timerCountDown.setText(FormatUtils.formatTime(value));
+                        Log.d(TAG,"Percentage: " + percentageProg);
+                        progressIndicator.setProgress(percentageProg);
                         if (workInfos.get(0).getState() == WorkInfo.State.SUCCEEDED) {
                             Toast.makeText(getApplicationContext(), "Work Success", Toast.LENGTH_SHORT).show();
+                            showSuccess();
                         }
                     }
                 }
@@ -107,9 +114,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         timePicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                numberPickerValue = i1;
+                numberPickerValueIndex = i1;
             }
         });
+    }
+
+    /**
+     * Show Success after completion of work
+     */
+    private void showSuccess() {
+
     }
 
     //Handle Click Events on start button
@@ -181,33 +195,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void readyWorker() {
         // Create the Data object:
-        int minute = numberPickerValue;
-
+        int minute = Integer.parseInt(timerValues[numberPickerValueIndex]);
+        Log.d(TAG,"Picker Value in minute: " + minute);
         Data myData = new Data.Builder()
                 // We need to pass three integers: X, Y, and Z
                 .putInt(Constants.KEY_COUNTDOWN_TIME,minute*60)
                 .build();
 
         workRequest = new OneTimeWorkRequest.Builder(CountDownWorker.class).setInputData(myData).build();
-        workManager.getWorkInfoByIdLiveData(workRequest.getId()).observe(this, new Observer<WorkInfo>() {
-            @Override
-            public void onChanged(WorkInfo workInfo) {
-                if (workInfo != null) {
-                    Data workProgress = workInfo.getProgress();
-                    int value = workProgress.getInt(ARG_PROGRESS, 0);
-                    int min = (int) (value/60.0);
-                    int sec = value%60;
-                    int percentageProg = workProgress.getInt(PERCENTAGE,0);
-                    timerCountDown.setText(min+ " : " + sec);
-                    Log.d(TAG," " + percentageProg);
-                    progressIndicator.setProgress(percentageProg);
-                    if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-                        Toast.makeText(getApplicationContext(), "Work Success", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
+//        workManager.getWorkInfoByIdLiveData(workRequest.getId()).observe(this, new Observer<WorkInfo>() {
+//            @Override
+//            public void onChanged(WorkInfo workInfo) {
+//                if (workInfo != null) {
+//                    Data workProgress = workInfo.getProgress();
+//                    int value = workProgress.getInt(ARG_PROGRESS, 0);
+//                    //Log.d(TAG,"Time Remaining: " + value);
+//                    int min = (int) (value/60.0);
+//                    int sec = value%60;
+//                    int percentageProg = workProgress.getInt(PERCENTAGE,0);
+//
+//                    //Format time in specific manner and set to text
+//                    timerCountDown.setText(FormatUtils.formatTime(min, sec));
+//                    //Log.d(TAG,"Percentage: " + percentageProg);
+//                    progressIndicator.setProgress(percentageProg);
+//                    if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+//                        Toast.makeText(getApplicationContext(), "Work Success", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            }
+//        });
 
+        //only add work if not running previously
         workManager.enqueueUniqueWork(Constants.WORK_NAME, ExistingWorkPolicy.KEEP, workRequest);
     }
 }

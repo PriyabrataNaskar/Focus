@@ -49,7 +49,7 @@ public class StatisticsActivity extends AppCompatActivity {
                             Data workProgress = workInfos.get(0).getProgress();
                             int value = workProgress.getInt(ARG_PROGRESS, 0);
                             Log.d(TAG,"Val " + value);
-                            timeTextView.setText(String.valueOf(value));
+                            timeTextView.setText(FormatUtils.formatTime(value));
                             if (workInfos.get(0).getState() == WorkInfo.State.SUCCEEDED) {
                                 Toast.makeText(getApplicationContext(), "Work Success", Toast.LENGTH_SHORT).show();
                             }

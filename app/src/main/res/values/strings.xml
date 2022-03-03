@@ -8,5 +8,8 @@
     <string name="statistics">Statistics</string>
     <string name="notification_title">Focusing</string>
     <string name="time">10 : 20</string>
+    <string name="focus_again">Focus Again</string>
+    <string name="congrats">Congrats!</string>
+    <string name="productivity_launcher">Your 7th time productivity launcher</string>
 
 </resources>
